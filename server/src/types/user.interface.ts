@@ -7,4 +7,7 @@ export interface User {
     createAt: Date;
 }
 
-export interface UserDocument extends User, Document { } // model for mongoose
+// model for mongoose
+export interface UserDocument extends User, Document {
+    validatePassword(param1: string): string;
+} 
