@@ -9,5 +9,5 @@ export interface User {
 
 // model for mongoose
 export interface UserDocument extends User, Document {
-    validatePassword(param1: string): string;
+    validatePassword(param1: string): Promise<boolean>;
 } 

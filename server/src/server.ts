@@ -18,7 +18,8 @@ app.get('/', (req, res) => {
     res.send("API is UP")
 });
 
-app.post('/api/users', usersController.register)
+app.post('/api/users', usersController.register);
+app.post('/api/users/login', usersController.login);
 
 // open socket connection
 io.on('connection', () => {
