@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { UserDocument } from '../types/user.interface';
 import UserModel from '../models/user';
 import { secret } from '../config';
+import { ExpressRequestInterface } from '../types/expressRequest.inerface';
 
 const normaliseUser = (user: UserDocument) => {
     const token = jwt.sign({ id: user.id, email: user.email }, secret)
@@ -68,4 +69,11 @@ export const login = async (
     } catch (err) {
         next(err);
     }
+}
+
+export const currentUser = (req: ExpressRequestInterface, res: Response) => {
+    if (!req.user) {
+        return res.sendStatus(401);
+    }
+    res.send(normaliseUser(req.user));
 }
