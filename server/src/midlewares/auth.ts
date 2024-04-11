@@ -14,7 +14,7 @@ export default async (
         const authHeader = req.headers.authorization;
 
         if (!authHeader) {
-            return res.send(401);
+            return res.sendStatus(401);
         }
 
         const token = authHeader.split(" ")[1];
