@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
+import { AuthService } from './auth/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +10,19 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'eltrello';
+export class AppComponent implements OnInit {
+
+  constructor(private authService: AuthService) { }
+
+  ngOnInit(): void {
+    this.authService.getCurrentUser().subscribe({
+      next: (res) => {
+        console.log(res);
+      },
+      error: (err) => {
+        console.log('Error', err.message);
+        this.authService.setCurrentUser(null);
+      }
+    });
+  }
 }
