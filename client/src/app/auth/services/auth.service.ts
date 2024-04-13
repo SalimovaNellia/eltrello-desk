@@ -1,10 +1,11 @@
+import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment.development';
-import { CurrentUserInterface } from '../types/currentUser.interface';
 import { RegisterRequestInterface } from '../types/registerRequest.interface';
+import { environment } from '../../../environments/environment.development';
+import { LoginRequestInterface } from '../types/loginRequest.interface';
+import { CurrentUserInterface } from '../types/currentUser.interface';
 
 
 @Injectable({
@@ -23,6 +24,11 @@ export class AuthService {
   register(registerRequest: RegisterRequestInterface): Observable<CurrentUserInterface> {
     const url = environment.apiUrl + '/users';
     return this.http.post<CurrentUserInterface>(url, registerRequest);
+  }
+
+  login(loginRequest: LoginRequestInterface): Observable<CurrentUserInterface> {
+    const url = environment.apiUrl + '/users/login';
+    return this.http.post<CurrentUserInterface>(url, loginRequest);
   }
 
   setToken(currentUser: CurrentUserInterface): void {

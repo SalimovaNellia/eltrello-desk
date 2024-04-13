@@ -4,34 +4,33 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
-import { RegisterRequestInterface } from '../../types/registerRequest.interface';
+import { LoginRequestInterface } from '../../types/loginRequest.interface';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'auth-register',
+  selector: 'auth-login',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    RouterModule,
     CommonModule,
+    RouterModule,
     FormsModule
   ],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.scss'
 })
-export class RegisterComponent {
+export class LoginComponent {
   errorMessage: string | null = null;
 
   form = new FormGroup({
-    'email': new FormControl('', [Validators.required]),
-    'username': new FormControl('', [Validators.required]),
-    'password': new FormControl('', [Validators.required])
-  });
+    email: new FormControl('', [Validators.required]),
+    password: new FormControl('', [Validators.required])
+  })
 
   constructor(private authService: AuthService, private router: Router) { }
 
   onSubmit(): void {
-    this.authService.register(this.form.value as RegisterRequestInterface).subscribe({
+    this.authService.login(this.form.value as LoginRequestInterface).subscribe({
       next: (currentUser) => {
         console.log('currentUSer', currentUser);
         this.authService.setToken(currentUser);
@@ -41,8 +40,9 @@ export class RegisterComponent {
       },
       error: (err: HttpErrorResponse) => {
         console.log('err', err.error);
-        this.errorMessage = err.error.join(', ');
+        this.errorMessage = err.error.emailOrPassword;
       }
     });
   }
+
 }
