@@ -14,12 +14,13 @@
 }
 
 .home-title {
+  margin-bottom: 30px;
   font-size: 48px;
   font-weight: 600;
-  margin-bottom: 8px;
 }
 
 .home-description {
+  margin-bottom: 30px;
   font-size: 25px;
   font-weight: 300;
 }
