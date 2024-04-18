@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import express from "express";
 import cors from 'cors';
 
+import * as boardsController from './controllers/boards';
 import * as usersController from './controllers/users';
 import authMiddleware from './midlewares/auth';
 
@@ -16,11 +17,22 @@ app.use(cors());
 app.use(bodyParser.json()); // parse request body from JSON to object
 app.use(bodyParser.urlencoded({ extended: true })); // parse url to body object
 
+//remove '_' from id property
+mongoose.set('toJSON', {
+    virtuals: true,
+    transform: (_, coverted) => {
+        delete coverted._id;
+    },
+});
+
 // add routes
 app.get('/', (req, res) => { res.send("API is UP") });
+
 app.post('/api/users', usersController.register);
 app.post('/api/users/login', usersController.login);
 app.get('/api/user', authMiddleware, usersController.currentUser);
+
+app.get('/api/boards', authMiddleware, boardsController.getBoards);
 
 // open socket connection
 io.on('connection', () => {
