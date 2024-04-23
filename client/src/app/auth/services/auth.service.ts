@@ -36,6 +36,11 @@ export class AuthService {
     return this.http.post<CurrentUserInterface>(url, loginRequest);
   }
 
+  logout(): void {
+    localStorage.removeItem('token');
+    this.currentUser$.next(null);
+  }
+
   setToken(currentUser: CurrentUserInterface): void {
     localStorage.setItem('token', currentUser.token);
   }
