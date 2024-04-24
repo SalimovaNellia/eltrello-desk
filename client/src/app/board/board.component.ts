@@ -1,22 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { BoardsService } from '../shared/services/boards.service';
 import { ActivatedRoute } from '@angular/router';
-import e from 'express';
+import { CommonModule } from '@angular/common';
+import { Observable, filter } from 'rxjs';
+
+import { BoardsService } from '../shared/services/boards.service';
+import { BoardInterface } from '../shared/types/board.interface';
+import { BoardService } from './services/board.service';
 
 @Component({
   selector: 'board',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss'
 })
 export class BoardComponent implements OnInit {
   boardId: string;
+  board$: Observable<BoardInterface>;
 
-  constructor(private boardsService: BoardsService, private activeRoute: ActivatedRoute) {
+  constructor(private boardsService: BoardsService, private boardService: BoardService, private activeRoute: ActivatedRoute) {
     const boardId = this.activeRoute.snapshot.paramMap.get('boardId');
     if (!boardId) { throw new Error("Can't get boardId from url"); }
     this.boardId = boardId;
+    this.board$ = this.boardService.board$.pipe(filter(Boolean));
   }
 
   ngOnInit(): void {
@@ -24,6 +30,7 @@ export class BoardComponent implements OnInit {
   }
 
   fetchData(): void {
-    this.boardsService.getBoard(this.boardId).subscribe(boardData => console.log('board', boardData));
+    this.boardsService.getBoard(this.boardId).subscribe(boardData => this.boardService.setBoard(boardData)
+    );
   }
 }
