@@ -11,7 +11,11 @@ import authMiddleware from './midlewares/auth';
 
 const app = express(); // instance of the express
 const httpServer = createServer(app); // http express server
-const io = new Server(httpServer); // socket server 
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*'
+    }
+}); // socket server 
 
 app.use(cors());
 app.use(bodyParser.json()); // parse request body from JSON to object

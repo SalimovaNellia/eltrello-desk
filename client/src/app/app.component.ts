@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { SocketService } from './shared/services/socket.service';
 import { AuthService } from './auth/services/auth.service';
 
 @Component({
@@ -12,11 +13,12 @@ import { AuthService } from './auth/services/auth.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private socketService: SocketService) { }
 
   ngOnInit(): void {
     this.authService.getCurrentUser().subscribe({
       next: (currentUser) => {
+        this.socketService.setupSocketConnection(currentUser);
         this.authService.setCurrentUser(currentUser);
       },
       error: (err) => {
