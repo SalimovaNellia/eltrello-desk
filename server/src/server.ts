@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import express from "express";
 import cors from 'cors';
 
+import { SocketEventsEnum } from './types/socket-events.enum';
 import * as boardsController from './controllers/boards';
 import * as usersController from './controllers/users';
 import authMiddleware from './midlewares/auth';
@@ -41,8 +42,13 @@ app.post('/api/boards', authMiddleware, boardsController.createBoard);
 app.get('/api/boards/:boardId', authMiddleware, boardsController.getBoard);
 
 // open socket connection
-io.on('connection', () => {
-    console.log("connect");
+io.on('connection', (socket) => {
+    socket.on(SocketEventsEnum.boardsJoin, (data) => {
+        boardsController.joinBoard(io, socket, data);
+    });
+    socket.on(SocketEventsEnum.boardsLeave, (data) => {
+        boardsController.leaveBoard(io, socket, data);
+    })
 });
 
 // connect database and start the server

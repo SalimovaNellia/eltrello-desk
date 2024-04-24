@@ -1,4 +1,5 @@
 import { NextFunction, Response } from "express";
+import { Server, Socket } from "socket.io";
 
 import { ExpressRequestInterface } from "../types/expressRequest.inerface";
 import BoardModel from "../models/board"
@@ -46,4 +47,21 @@ export const getBoard = async (
     } catch (err) {
         next(err);
     }
+}
+
+export const joinBoard = async (
+    io: Server,
+    socket: Socket,
+    data: { boardId: string }
+) => {
+    // join current socket connection to boardId (user will recive all messages from this board)
+    socket.join(data.boardId);
+}
+
+export const leaveBoard = async (
+    io: Server,
+    socket: Socket,
+    data: { boardId: string }
+) => {
+    socket.leave(data.boardId);
 }
