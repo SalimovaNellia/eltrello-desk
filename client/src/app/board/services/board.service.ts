@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-import { SocketEventsEnum } from '../../shared/types/socket-events.enum';
+import { SocketEventsEnum } from '../../shared/types/socketEvents.enum';
 import { SocketService } from '../../shared/services/socket.service';
 import { BoardInterface } from '../../shared/types/board.interface';
 
