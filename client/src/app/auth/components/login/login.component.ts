@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 import { LoginRequestInterface } from '../../types/loginRequest.interface';
+import { SocketService } from '../../../shared/services/socket.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -27,13 +28,18 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required])
   })
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private socketService: SocketService,
+    private authService: AuthService,
+    private router: Router,
+  ) { }
 
   onSubmit(): void {
     this.authService.login(this.form.value as LoginRequestInterface).subscribe({
       next: (currentUser) => {
         console.log('currentUSer', currentUser);
         this.authService.setToken(currentUser);
+        this.socketService.setupSocketConnection(currentUser);
         this.authService.setCurrentUser(currentUser);
         this.errorMessage = null;
         this.router.navigateByUrl('/');

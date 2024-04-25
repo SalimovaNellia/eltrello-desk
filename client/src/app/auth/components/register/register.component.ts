@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 import { RegisterRequestInterface } from '../../types/registerRequest.interface';
+import { SocketService } from '../../../shared/services/socket.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -28,13 +29,18 @@ export class RegisterComponent {
     'password': new FormControl('', [Validators.required])
   });
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private socketService: SocketService,
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
   onSubmit(): void {
     this.authService.register(this.form.value as RegisterRequestInterface).subscribe({
       next: (currentUser) => {
         console.log('currentUSer', currentUser);
         this.authService.setToken(currentUser);
+        this.socketService.setupSocketConnection(currentUser);
         this.authService.setCurrentUser(currentUser);
         this.errorMessage = null;
         this.router.navigateByUrl('/');

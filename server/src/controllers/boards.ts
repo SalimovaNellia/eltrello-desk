@@ -1,7 +1,8 @@
 import { NextFunction, Response } from "express";
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 
 import { ExpressRequestInterface } from "../types/expressRequest.inerface";
+import { Socket } from '../types/socket.interface';
 import BoardModel from "../models/board"
 
 export const getBoards = async (
