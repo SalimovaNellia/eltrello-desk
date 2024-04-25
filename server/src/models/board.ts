@@ -13,4 +13,4 @@ const boardSchema = new Schema<BoardDocument>({
     },
 });
 
-export default model<BoardDocument>('Board', boardSchema)
+export default model<BoardDocument>('Board', boardSchema);

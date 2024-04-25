@@ -6,7 +6,8 @@ import jwt from 'jsonwebtoken';
 import express from 'express';
 import cors from 'cors';
 
-import { SocketEventsEnum } from './types/socket-events.enum';
+import { SocketEventsEnum } from './types/socketEvents.enum';
+import * as columnsController from './controllers/columns';
 import * as boardsController from './controllers/boards';
 import * as usersController from './controllers/users';
 import { Socket } from './types/socket.interface';
@@ -44,6 +45,7 @@ app.get('/api/user', authMiddleware, usersController.currentUser);
 app.get('/api/boards', authMiddleware, boardsController.getBoards);
 app.post('/api/boards', authMiddleware, boardsController.createBoard);
 app.get('/api/boards/:boardId', authMiddleware, boardsController.getBoard);
+app.get('/api/boards/:boardId/columns', authMiddleware, columnsController.getColumns);
 
 // open socket connection
 io.use(async (socket: Socket, next) => {

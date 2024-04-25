@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, filter } from 'rxjs';
 
-import { SocketEventsEnum } from '../shared/types/socket-events.enum';
+import { SocketEventsEnum } from '../shared/types/socketEvents.enum';
 import { SocketService } from '../shared/services/socket.service';
 import { BoardsService } from '../shared/services/boards.service';
 import { BoardInterface } from '../shared/types/board.interface';
