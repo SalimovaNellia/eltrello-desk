@@ -1,7 +1,12 @@
 import { NextFunction, Response } from 'express';
+import { Server } from "socket.io";
 
 import { ExpressRequestInterface } from "../types/expressRequest.inerface";
+import { SocketEventsEnum } from '../types/socketEvents.enum';
+import { Socket } from '../types/socket.interface';
+import { getErrorMessage } from '../helpers';
 import ColumnModel from '../models/column';
+
 
 export const getColumns = async (
     req: ExpressRequestInterface,
@@ -14,4 +19,28 @@ export const getColumns = async (
     } catch (err) {
         next(err);
     }
-}
+};
+
+export const createColumn = async (
+    io: Server,
+    socket: Socket,
+    data: { boardId: string, title: string }
+) => {
+    try {
+        if (!socket.user) {
+            socket.emit(SocketEventsEnum.columnsCreateFailure, 'User is not authorised');
+            return;
+        }
+        const newColumn = new ColumnModel({
+            userId: socket.user.id,
+            boardId: data.boardId,
+            title: data.title,
+        });
+
+        const savedColumn = await newColumn.save();
+        io.to(data.boardId).emit(SocketEventsEnum.columnsCreateSuccess, savedColumn);
+        console.log('saved column', savedColumn);
+    } catch (err) {
+        socket.emit(SocketEventsEnum.columnsCreateFailure, getErrorMessage(err));
+    }
+};

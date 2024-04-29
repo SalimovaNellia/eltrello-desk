@@ -71,7 +71,10 @@ io.use(async (socket: Socket, next) => {
     });
     socket.on(SocketEventsEnum.boardsLeave, (data) => {
         boardsController.leaveBoard(io, socket, data);
-    })
+    });
+    socket.on(SocketEventsEnum.columnsCreate, (data) => {
+        columnsController.createColumn(io, socket, data);
+    });
 });
 
 // connect database and start the server
