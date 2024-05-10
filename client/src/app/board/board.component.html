@@ -1,2 +1,15 @@
-<p>board works!</p>
-{{ board$ | async | json}}
+<app-top-bar></app-top-bar>
+
+<div class="board" *ngIf="data$ | async as data">
+    <div class="board-header-container">
+        INLINE FORM BOARD
+    </div>
+    <div class="columns">
+        <div class="column" *ngFor="let column of data.columns">
+            <div class="column-title">{{ column.title }}</div>
+        </div>
+        <inline-form class="create-column-form" defaultText="Add a list" [hasButton]="true" buttonText="Add list"
+            inputPlaceholder="Add column name" (handleSubmit)="createColumn($event)">
+        </inline-form>
+    </div>
+</div>
