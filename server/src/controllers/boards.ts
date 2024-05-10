@@ -2,7 +2,9 @@ import { NextFunction, Response } from "express";
 import { Server } from "socket.io";
 
 import { ExpressRequestInterface } from "../types/expressRequest.inerface";
+import { SocketEventsEnum } from "../types/socketEvents.enum";
 import { Socket } from '../types/socket.interface';
+import { getErrorMessage } from "../helpers";
 import BoardModel from "../models/board"
 
 export const getBoards = async (
@@ -66,3 +68,26 @@ export const leaveBoard = async (
 ) => {
     socket.leave(data.boardId);
 }
+
+export const updateBoard = async (
+    io: Server,
+    socket: Socket,
+    data: { boardId: string, fields: { title: string } }
+) => {
+    try {
+        if (!socket.user) {
+            socket.emit(SocketEventsEnum.boardsUpdateFailure, getErrorMessage("User is not authorised"));
+            return;
+        }
+
+        const updatedBoard = await BoardModel.findByIdAndUpdate(
+            data.boardId,
+            data.fields,
+            { new: true }
+        );
+
+        io.to(data.boardId).emit(SocketEventsEnum.boardsUpdateSuccess, updatedBoard);
+    } catch (err) {
+        socket.emit(SocketEventsEnum.boardsUpdateFailure, getErrorMessage(err));
+    }
+};
