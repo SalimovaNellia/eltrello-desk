@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { InlineFormComponent } from "../shared/components/inline-form/inline-form.component";
 import { TopBarComponent } from "../shared/components/top-bar/top-bar.component";
 import { ColumnInputInterface } from '../shared/types/columnInput.interface';
+import { TaskInputInterface } from '../shared/types/taskInput.interface';
 import { SocketEventsEnum } from '../shared/types/socketEvents.enum';
 import { ColumnsService } from '../shared/services/columns.service';
 import { ColumnInterface } from '../shared/types/column.interface';
@@ -75,6 +76,11 @@ export class BoardComponent implements OnInit {
       .subscribe(column => {
         this.boardService.addColumn(column);
       });
+
+    this.socketService.listen<TaskInterface>(SocketEventsEnum.tasksCreateSuccess)
+      .subscribe(task => {
+        this.boardService.addTask(task);
+      });
   }
 
   fetchData(): void {
@@ -89,10 +95,20 @@ export class BoardComponent implements OnInit {
 
   createColumn(title: string): void {
     const columnInput: ColumnInputInterface = {
-      title: title,
+      title,
       boardId: this.boardId
     };
 
     this.columnsService.createColumn(columnInput);
+  }
+
+  createTask(title: string, columnId: string): void {
+    const taskInput: TaskInputInterface = {
+      title,
+      boardId: this.boardId,
+      columnId
+    };
+
+    this.tasksService.createTask(taskInput);
   }
 }
