@@ -12,6 +12,8 @@ import { ColumnInterface } from '../shared/types/column.interface';
 import { SocketService } from '../shared/services/socket.service';
 import { BoardsService } from '../shared/services/boards.service';
 import { BoardInterface } from '../shared/types/board.interface';
+import { TasksService } from '../shared/services/tasks.service';
+import { TaskInterface } from '../shared/types/task.interface';
 import { BoardService } from './services/board.service';
 
 @Component({
@@ -27,7 +29,8 @@ export class BoardComponent implements OnInit {
 
   data$: Observable<{
     board: BoardInterface,
-    columns: ColumnInterface[]
+    columns: ColumnInterface[],
+    tasks: TaskInterface[]
   }>;
 
   constructor(
@@ -36,6 +39,7 @@ export class BoardComponent implements OnInit {
     private boardsService: BoardsService,
     private activeRoute: ActivatedRoute,
     private boardService: BoardService,
+    private tasksService: TasksService,
     private router: Router
   ) {
     const boardId = this.activeRoute.snapshot.paramMap.get('boardId');
@@ -45,10 +49,12 @@ export class BoardComponent implements OnInit {
 
     this.data$ = combineLatest([
       this.board$ = this.boardService.board$.pipe(filter(Boolean)),
-      this.boardService.columns$
-    ]).pipe(map(([board, columns]) => ({
+      this.boardService.columns$,
+      this.boardService.tasks$
+    ]).pipe(map(([board, columns, tasks]) => ({
       board,
-      columns
+      columns,
+      tasks
     })));
   }
 
@@ -74,6 +80,11 @@ export class BoardComponent implements OnInit {
   fetchData(): void {
     this.boardsService.getBoard(this.boardId).subscribe(boardData => this.boardService.setBoard(boardData));
     this.columnsService.getColumns(this.boardId).subscribe(columns => this.boardService.setColumns(columns));
+    this.tasksService.getTasks(this.boardId).subscribe(tasks => this.boardService.setTasks(tasks));
+  }
+
+  getTasksByColumn(columnId: string, tasks: TaskInterface[]): TaskInterface[] {
+    return tasks.filter(task => task.columnId === columnId);
   }
 
   createColumn(title: string): void {

@@ -7,6 +7,9 @@
     <div class="columns">
         <div class="column" *ngFor="let column of data.columns">
             <div class="column-title">{{ column.title }}</div>
+            <div class="task" *ngFor="let task of getTasksByColumn(column.id, data.tasks)">
+                {{ task.title }}
+            </div>
         </div>
         <inline-form class="create-column-form" defaultText="Add a list" [hasButton]="true" buttonText="Add list"
             inputPlaceholder="Add column name" (handleSubmit)="createColumn($event)">
