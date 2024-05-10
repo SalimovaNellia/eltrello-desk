@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'; //package to work with mongo DB
-import { Server } from 'socket.io';
 import bodyParser from 'body-parser';
 import { createServer } from 'http';
+import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import express from 'express';
 import cors from 'cors';
@@ -10,6 +10,7 @@ import { SocketEventsEnum } from './types/socketEvents.enum';
 import * as columnsController from './controllers/columns';
 import * as boardsController from './controllers/boards';
 import * as usersController from './controllers/users';
+import * as tasksController from './controllers/tasks';
 import { Socket } from './types/socket.interface';
 import authMiddleware from './midlewares/auth';
 import { secret } from './config';
@@ -46,6 +47,7 @@ app.get('/api/boards', authMiddleware, boardsController.getBoards);
 app.post('/api/boards', authMiddleware, boardsController.createBoard);
 app.get('/api/boards/:boardId', authMiddleware, boardsController.getBoard);
 app.get('/api/boards/:boardId/columns', authMiddleware, columnsController.getColumns);
+app.get('/api/boards/:boardId/tasks', authMiddleware, tasksController.getTasks);
 
 // open socket connection
 io.use(async (socket: Socket, next) => {
@@ -74,6 +76,9 @@ io.use(async (socket: Socket, next) => {
     });
     socket.on(SocketEventsEnum.columnsCreate, (data) => {
         columnsController.createColumn(io, socket, data);
+    });
+    socket.on(SocketEventsEnum.tasksCreate, (data) => {
+        tasksController.createTask(io, socket, data);
     });
 });
 

@@ -1,0 +1,47 @@
+import { NextFunction, Response } from "express";
+import { Server } from "socket.io";
+
+
+import { ExpressRequestInterface } from "../types/expressRequest.inerface";
+import { SocketEventsEnum } from "../types/socketEvents.enum";
+import { Socket } from '../types/socket.interface';
+import { getErrorMessage } from "../helpers";
+import TaskModel from "../models/task";
+
+export const getTasks = async (
+    req: ExpressRequestInterface,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        if (!req.user) { return res.sendStatus(401); }
+        const tasks = await TaskModel.find({ boardId: req.params.boardId });
+        res.send(tasks);
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const createTask = async (
+    io: Server,
+    socket: Socket,
+    data: { boardId: string, title: string, columnId: string }
+) => {
+    try {
+        if (!socket.user) {
+            socket.emit(SocketEventsEnum.tasksCreateFailure, 'User is not authorised');
+            return;
+        }
+        const newTask = new TaskModel({
+            title: data.title,
+            boardId: data.boardId,
+            userId: socket.user.id,
+            columnId: data.columnId
+        });
+        const savedTask = await newTask.save();
+
+        io.to(data.boardId).emit(SocketEventsEnum.tasksCreateSuccess, savedTask);
+    } catch (err) {
+        socket.emit(SocketEventsEnum.columnsCreateFailure, getErrorMessage(err));
+    }
+}

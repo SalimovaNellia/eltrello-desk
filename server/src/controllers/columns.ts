@@ -39,7 +39,6 @@ export const createColumn = async (
 
         const savedColumn = await newColumn.save();
         io.to(data.boardId).emit(SocketEventsEnum.columnsCreateSuccess, savedColumn);
-        console.log('saved column', savedColumn);
     } catch (err) {
         socket.emit(SocketEventsEnum.columnsCreateFailure, getErrorMessage(err));
     }
