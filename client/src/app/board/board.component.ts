@@ -81,6 +81,11 @@ export class BoardComponent implements OnInit {
       .subscribe(task => {
         this.boardService.addTask(task);
       });
+
+    this.socketService.listen<BoardInterface>(SocketEventsEnum.boardsUpdateSuccess)
+      .subscribe(updatedBoard => {
+        this.boardService.updatesBoard(updatedBoard);
+      });
   }
 
   fetchData(): void {
@@ -110,5 +115,9 @@ export class BoardComponent implements OnInit {
     };
 
     this.tasksService.createTask(taskInput);
+  }
+
+  updateBoardName(boardName: string): void {
+    this.boardsService.updateBoard(this.boardId, { title: boardName });
   }
 }
