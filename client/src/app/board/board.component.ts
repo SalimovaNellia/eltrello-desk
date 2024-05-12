@@ -72,19 +72,24 @@ export class BoardComponent implements OnInit {
       }
     });
 
-    this.socketService.listen<ColumnInterface>(SocketEventsEnum.columnsCreateSuccess)
-      .subscribe(column => {
-        this.boardService.addColumn(column);
-      });
-
     this.socketService.listen<BoardInterface>(SocketEventsEnum.boardsUpdateSuccess)
       .subscribe(updatedBoard => {
-        this.boardService.updatesBoard(updatedBoard);
+        this.boardService.updateBoard(updatedBoard);
       });
 
     this.socketService.listen<void>(SocketEventsEnum.boardsDeleteSuccess)
       .subscribe(() => {
         this.router.navigateByUrl('/boards');
+      });
+
+    this.socketService.listen<ColumnInterface>(SocketEventsEnum.columnsCreateSuccess)
+      .subscribe(column => {
+        this.boardService.addColumn(column);
+      });
+
+    this.socketService.listen<ColumnInterface>(SocketEventsEnum.columnsUpdateSuccess)
+      .subscribe(updatedColumn => {
+        this.boardService.updateColumn(updatedColumn);
       });
 
     this.socketService.listen<string>(SocketEventsEnum.columnsDeleteSuccess)
@@ -96,35 +101,13 @@ export class BoardComponent implements OnInit {
       .subscribe(task => {
         this.boardService.addTask(task);
       });
+
   }
 
   fetchData(): void {
     this.boardsService.getBoard(this.boardId).subscribe(boardData => this.boardService.setBoard(boardData));
     this.columnsService.getColumns(this.boardId).subscribe(columns => this.boardService.setColumns(columns));
     this.tasksService.getTasks(this.boardId).subscribe(tasks => this.boardService.setTasks(tasks));
-  }
-
-  getTasksByColumn(columnId: string, tasks: TaskInterface[]): TaskInterface[] {
-    return tasks.filter(task => task.columnId === columnId);
-  }
-
-  createColumn(title: string): void {
-    const columnInput: ColumnInputInterface = {
-      title,
-      boardId: this.boardId
-    };
-
-    this.columnsService.createColumn(columnInput);
-  }
-
-  createTask(title: string, columnId: string): void {
-    const taskInput: TaskInputInterface = {
-      title,
-      boardId: this.boardId,
-      columnId
-    };
-
-    this.tasksService.createTask(taskInput);
   }
 
   updateBoardName(boardName: string): void {
@@ -137,9 +120,36 @@ export class BoardComponent implements OnInit {
     }
   }
 
+  createColumn(title: string): void {
+    const columnInput: ColumnInputInterface = {
+      title,
+      boardId: this.boardId
+    };
+
+    this.columnsService.createColumn(columnInput);
+  }
+
+  updateColumnName(columnName: string, columnId: string): void {
+    this.columnsService.updateColumn(this.boardId, columnId, { title: columnName });
+  }
+
   deleteColumn(columnId: string): void {
     if (confirm("Are you sure you want to delete the column?")) {
       this.columnsService.deleteColumn(this.boardId, columnId);
     }
+  }
+
+  getTasksByColumn(columnId: string, tasks: TaskInterface[]): TaskInterface[] {
+    return tasks.filter(task => task.columnId === columnId);
+  }
+
+  createTask(title: string, columnId: string): void {
+    const taskInput: TaskInputInterface = {
+      title,
+      boardId: this.boardId,
+      columnId
+    };
+
+    this.tasksService.createTask(taskInput);
   }
 }
