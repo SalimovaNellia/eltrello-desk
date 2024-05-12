@@ -44,6 +44,30 @@ export const createColumn = async (
     }
 };
 
+export const updateColumn = async (
+    io: Server,
+    socket: Socket,
+    data: { boardId: string; columnId: string, fields: { title: string } }
+) => {
+    try {
+        if (!socket.user) {
+            socket.emit(SocketEventsEnum.columnsUpdateFailure, getErrorMessage("User is not authorised"));
+            return;
+        }
+
+        const updatedColumn = await ColumnModel.findByIdAndUpdate(
+            data.columnId,
+            data.fields,
+            { new: true }
+        );
+
+        io.to(data.boardId).emit(SocketEventsEnum.columnsUpdateSuccess, updatedColumn);
+    } catch (err) {
+        socket.emit(SocketEventsEnum.columnsUpdateFailure, getErrorMessage(err));
+    }
+}
+
+
 export const deleteColumn = async (
     io: Server,
     socket: Socket,
