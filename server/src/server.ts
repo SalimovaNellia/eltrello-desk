@@ -77,6 +77,9 @@ io.use(async (socket: Socket, next) => {
     socket.on(SocketEventsEnum.columnsCreate, (data) => {
         columnsController.createColumn(io, socket, data);
     });
+    socket.on(SocketEventsEnum.columnsDelete, (data) => {
+        columnsController.deleteColumn(io, socket, data);
+    });
     socket.on(SocketEventsEnum.tasksCreate, (data) => {
         tasksController.createTask(io, socket, data);
     });
