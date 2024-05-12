@@ -31,4 +31,8 @@ export class BoardsService {
   updateBoard(boardId: string, fields: { title: string }): void {
     this.socketService.emit(SocketEventsEnum.boardsUpdate, { boardId, fields });
   }
+
+  deleteBoard(boardId: string): void {
+    this.socketService.emit(SocketEventsEnum.boardsDelete, { boardId });
+  }
 }
