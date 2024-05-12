@@ -56,7 +56,7 @@ export const deleteColumn = async (
         }
 
         await ColumnModel.findByIdAndDelete(data.columnId);
-        io.to(data.boardId).emit(SocketEventsEnum.columnsDeleteSuccess);
+        io.to(data.boardId).emit(SocketEventsEnum.columnsDeleteSuccess, data.columnId);
     } catch (err) {
         socket.emit(SocketEventsEnum.columnsDeleteFailure, getErrorMessage(err));
     }
