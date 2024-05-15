@@ -1,16 +1,25 @@
-<div class="task-modal-container">
+<div class="task-modal-container" *ngIf="data$ | async as data">
     <div class="task-modal-header">
-        TASK TITLE INLINE FORM
+        <inline-form class="task-modal-edit-title-form" [defaultText]="data.task.title" [title]="data.task.title"
+            (handleSubmit)="updateTaskName($event)">
+        </inline-form>
         <img src="/assets/close_icon.svg" close_icon.svg class="task-modal-close" (click)="goToBoard()">
     </div>
     <div class="task-modal-body">
         <div>
-            <form action="" class="column-select-container">
-                SELECT COLUMN
+            <form [formGroup]="columnForm" action="" class="column-select-container">
+                <select formControlName="columnId" class="column-select">
+                    <option *ngFor="let column of data.columns" [ngValue]="column.id">
+                        {{column.title}}
+                    </option>
+                </select>
             </form>
             <div class="task-modal-description">
                 <div class="task-modal-description-label">Description</div>
-                INLINE FORMDECRIPTION
+                <inline-form class="task-modal-edit-description-form"
+                    [defaultText]="data.task.description || 'Add a more detailed description'"
+                    [title]="data.task.description || ''" inputType="textarea" [hasButton]="true" buttonText="Save"
+                    (handleSubmit)="updateTaskDescription($event)"></inline-form>
             </div>
         </div>
         <div class="task-modal-actions">
