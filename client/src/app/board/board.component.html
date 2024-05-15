@@ -13,7 +13,7 @@
                     (handleSubmit)="updateColumnName($event, column.id)"></inline-form>
                 <img src="/assets/close_icon.svg" class="column-delete-icon" (click)="deleteColumn(column.id)">
             </div>
-            <div class="task" *ngFor="let task of getTasksByColumn(column.id, data.tasks)">
+            <div class="task" *ngFor="let task of getTasksByColumn(column.id, data.tasks)" (click)="openTask(task.id)">
                 {{ task.title }}
             </div>
             <inline-form class="create-task-form" defaultText="Add a card" [hasButton]="true" buttonText="Add card"
@@ -25,3 +25,5 @@
         </inline-form>
     </div>
 </div>
+
+<router-outlet></router-outlet>

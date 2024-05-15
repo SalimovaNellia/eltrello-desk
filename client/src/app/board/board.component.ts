@@ -1,5 +1,5 @@
+import { ActivatedRoute, NavigationStart, Router, RouterModule } from '@angular/router';
 import { Observable, Subject, combineLatest, filter, map, takeUntil } from 'rxjs';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -22,7 +22,7 @@ import { BoardService } from './services/board.service';
   standalone: true,
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
-  imports: [CommonModule, TopBarComponent, InlineFormComponent]
+  imports: [CommonModule, TopBarComponent, InlineFormComponent, RouterModule]
 })
 export class BoardComponent implements OnInit {
   boardId: string;
@@ -69,7 +69,7 @@ export class BoardComponent implements OnInit {
 
   initializeListeners(): void {
     this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
+      if (event instanceof NavigationStart && !event.url.includes('/boards/')) {
         this.boardService.leaveBoard(this.boardId);
       }
     });
@@ -163,6 +163,10 @@ export class BoardComponent implements OnInit {
       columnId
     };
     this.tasksService.createTask(taskInput);
+  }
+
+  openTask(taskId: string): void {
+    this.router.navigate(['boards', this.boardId, 'tasks', taskId]);
   }
 
   ngOnDestroy(): void {
