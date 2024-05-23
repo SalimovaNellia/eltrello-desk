@@ -123,6 +123,10 @@ export class BoardComponent implements OnInit {
         this.boardService.updateTask(updatedTask);
       });
 
+    this.socketService
+      .listen<string>(SocketEventsEnum.tasksDeleteSuccess)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((taskId) => this.boardService.deleteTask(taskId));
   }
 
   fetchData(): void {
