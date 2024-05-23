@@ -8,6 +8,7 @@ import { InlineFormComponent } from "../../../shared/components/inline-form/inli
 import { ColumnInterface } from '../../../shared/types/column.interface';
 import { TaskInterface } from '../../../shared/types/task.interface';
 import { BoardService } from '../../services/board.service';
+import { TasksService } from '../../../shared/services/tasks.service';
 
 @Component({
   selector: 'task-modal',
@@ -32,6 +33,7 @@ export class TaskModalComponent implements OnDestroy {
 
   constructor(
     private boardService: BoardService,
+    private tasksService: TasksService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private router: Router
@@ -52,7 +54,7 @@ export class TaskModalComponent implements OnDestroy {
 
     this.task$ = this.boardService.tasks$.pipe(
       map(tasks => {
-        return tasks.find(task => task.id = this.taskId)
+        return tasks.find(task => task.id === this.taskId)
       }),
       filter(Boolean)
     );
@@ -67,15 +69,27 @@ export class TaskModalComponent implements OnDestroy {
     this.task$.pipe(takeUntil(this.unsubscribe$)).subscribe(task => {
       this.columnForm.patchValue({ columnId: task.columnId })
     })
+
+    combineLatest([this.task$, this.columnForm.get('columnId')!.valueChanges])
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(([task, columnId]) => {
+        if (task.columnId !== columnId) {
+          this.tasksService.updateTask(this.boardId, task.id, { columnId: columnId as string | undefined });
+        }
+      })
   }
 
   goToBoard(): void {
     this.router.navigate(['boards', this.boardId]);
   }
 
-  updateTaskName(taskName: string): void { }
+  updateTaskName(taskName: string): void {
+    this.tasksService.updateTask(this.boardId, this.taskId, { title: taskName });
+  }
 
-  updateTaskDescription(taskDescription: string): void { }
+  updateTaskDescription(taskDescription: string): void {
+    this.tasksService.updateTask(this.boardId, this.taskId, { description: taskDescription });
+  }
 
   ngOnDestroy(): void {
     this.unsubscribe$.next();
