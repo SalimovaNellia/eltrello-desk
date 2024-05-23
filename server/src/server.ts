@@ -95,6 +95,9 @@ io.use(async (socket: Socket, next) => {
     socket.on(SocketEventsEnum.tasksUpdate, (data) => {
         tasksController.updateTask(io, socket, data);
     });
+    socket.on(SocketEventsEnum.tasksDelete, (data) => {
+        tasksController.deleteTask(io, socket, data);
+    });
 });
 
 // connect database and start the server
