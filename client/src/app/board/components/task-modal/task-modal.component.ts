@@ -6,9 +6,9 @@ import { CommonModule } from '@angular/common';
 
 import { InlineFormComponent } from "../../../shared/components/inline-form/inline-form.component";
 import { ColumnInterface } from '../../../shared/types/column.interface';
+import { TasksService } from '../../../shared/services/tasks.service';
 import { TaskInterface } from '../../../shared/types/task.interface';
 import { BoardService } from '../../services/board.service';
-import { TasksService } from '../../../shared/services/tasks.service';
 
 @Component({
   selector: 'task-modal',

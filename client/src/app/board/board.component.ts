@@ -116,6 +116,13 @@ export class BoardComponent implements OnInit {
         this.boardService.addTask(task);
       });
 
+    this.socketService
+      .listen<TaskInterface>(SocketEventsEnum.tasksUpdateSuccess)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(updatedTask => {
+        this.boardService.updateTask(updatedTask);
+      });
+
   }
 
   fetchData(): void {
